@@ -1,7 +1,7 @@
-#include "line_keeper.h"
+#include "lane_keeper.h"
 #include <math.h>
 
-std::vector<double> LineKeeper::getXY(double s, double d)
+std::vector<double> LaneKeeper::getXY(double s, double d)
 {
   double EPSILON = 2.0;
 	double seg_x = _s_x(s);
@@ -16,7 +16,7 @@ std::vector<double> LineKeeper::getXY(double s, double d)
 	return {x,y};
 }
 
-std::vector<double> LineKeeper::get_old_s_d(State state) {
+std::vector<double> LaneKeeper::get_old_s_d(State state) {
   double prev_s, prev_d, prev_speed;
 
   for(int i = 0; i < old_x.size(); i++) {
@@ -35,7 +35,7 @@ std::vector<double> LineKeeper::get_old_s_d(State state) {
   }
 }
 
-void LineKeeper::predict(State state, std::vector<double> &next_x_vals, std::vector<double> &next_y_vals) {
+void LaneKeeper::predict(State state, std::vector<double> &next_x_vals, std::vector<double> &next_y_vals) {
   double prev_s, prev_d, prev_speed;
 
   if (state.previous_path_x.size() < 2) {

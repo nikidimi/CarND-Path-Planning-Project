@@ -4,9 +4,9 @@
 #include "traffic.h"
 #include "state.h"
 
-class LineKeeper {
+class LaneKeeper {
 public:
-  LineKeeper(tk::spline s_x, tk::spline s_y): _s_x(s_x), _s_y(s_y) {};
+  LaneKeeper(tk::spline s_x, tk::spline s_y): _s_x(s_x), _s_y(s_y) {};
   std::vector<double> getXY(double s, double d);
   void predict(State state, std::vector<double> &next_x_vals, std::vector<double> &next_y_vals);
 private:
