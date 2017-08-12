@@ -63,16 +63,6 @@ void LineKeeper::get_old_s_d(State state) {
 }
 
 void LineKeeper::predict(State state, std::vector<double> &next_x_vals, std::vector<double> &next_y_vals) {
-  if (quit) {
-    for(int i = 0; i < state.previous_path_x.size(); i++)
-    {
-      next_x_vals.push_back(state.previous_path_x[i]);
-      next_y_vals.push_back(state.previous_path_y[i]);
-
-    }
-    return;
-  }
-
   if (prev_speed == 0) {
     prev_s = state.car_s;
     prev_d = state.car_d;
@@ -82,54 +72,42 @@ void LineKeeper::predict(State state, std::vector<double> &next_x_vals, std::vec
   }
 
   double dist_inc = 0.3;
-  //cout << "diff=" << diff << " delta_s=" << car_s - min_s << endl;
-
-
   double target_speed = 0.4;
-  /*if (step % 100 > 50) {
-    target_speed = 0.1;
-    std::cout << "SLOW" << std::endl;
-  }*/
-  double t = 500;
-  double acc = (target_speed-prev_speed)/t;
-  double target_s = prev_s + t * prev_speed + 1.2*acc * t * t/2;
 
-  double traffic_speed = 0;
   state.traffic.last_id = last_car_id;
-  //double traffic_speed = state.traffic.get_max_speed(target_s, prev_d);
-  //if (traffic_speed > 0) {
-  //  target_speed = traffic_speed;
-  //  target_s -= (prev_speed - traffic_speed) * t / 2;
-  //}
-
-  QuinticSolver solver, solver_d;
-
-  solver.fit(prev_s, prev_speed, 0, target_s, target_speed, 0, t);
-  solver_d.fit(prev_d, 0, 0, 6, 0, 0, t);
-
+  double traffic_speed = state.traffic.get_max_speed(prev_s, prev_d);
+  if (traffic_speed > 0) {
+    target_speed = traffic_speed;
+  }
+  double speed = prev_speed;
   double current_s = prev_s;
+
   for(int i = 1; i < 500; i++)
   {
-    double s = solver(i);
-    double d = solver_d(i);
+    double s = current_s + speed;
+    current_s = s;
+    double d = 6;
     std::vector<double> cartesian = getXY(s, d);
 
     old_x.push_back(cartesian[0]);
     old_y.push_back(cartesian[1]);
     old_s.push_back(s);
     old_d.push_back(d);
-    old_speed.push_back(s - current_s);
+    old_speed.push_back(speed);
     next_x_vals.push_back(cartesian[0]);
     next_y_vals.push_back(cartesian[1]);
-    current_s = s;
+
+    if (speed < target_speed) {
+      speed += 0.001;
+    }
+    else if (speed > target_speed) {
+      speed -= 0.001;
+    }
   }
-
-  quit = true;
-
 
   prev_s = current_s;
   prev_d = 6;
-  prev_speed = target_speed;
+  prev_speed = speed;
   step++;
   last_car_id = state.traffic.last_id;
 }
