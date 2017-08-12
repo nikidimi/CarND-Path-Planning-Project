@@ -15,10 +15,19 @@ double Traffic::get_max_speed(double s, double d) {
     if (car.d < d - 2 || car.d > d + 2) {
       continue;
     }
-    if (car.s > s && abs(car.s - s) < 1) {
-      std::cout << "following car s=" << car.s << " d=" << car.d;
-      std::cout << " delta s=" << s << " delta d=" << s << std::endl;
+    if (abs(car.s - s) < 2) {
+      std::cout << "following car " << car.id << " s=" << car.s << " d=" << car.d;
+      std::cout << " delta s=" << s << " delta d=" << d << std::endl;
+      last_id = car.id;
       return car.get_speed();
+    }
+  }
+
+  for(Car &car: _cars) {
+    if (abs(car.id - last_id) < 0.1) {
+      std::cout << "prev car s=" << car.s << " d=" << car.d;
+      std::cout << " delta s=" << s << " delta d=" << d << std::endl;
+      break;
     }
   }
 

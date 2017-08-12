@@ -11,7 +11,7 @@ Car::Car(std::vector<double> data) {
 }
 
 double Car::get_speed() {
-  return 0.2;
+  return 0.3;
 }
 
 bool Car::operator<(const Car& rhs) {
