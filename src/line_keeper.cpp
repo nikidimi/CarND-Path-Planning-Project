@@ -3,11 +3,6 @@
 
 std::vector<double> LineKeeper::getXY(double s, double d)
 {
-
-//	double heading = atan2((maps_y[wp2]-maps_y[prev_wp]),(maps_x[wp2]-maps_x[prev_wp]));
-	// the x,y,s along the segment
-	//double seg_s = (s-maps_s[prev_wp]);
-
   double EPSILON = 2.0;
 	double seg_x = _s_x(s);
 	double seg_y = _s_y(s);
@@ -20,30 +15,6 @@ std::vector<double> LineKeeper::getXY(double s, double d)
 
 	return {x,y};
 }
-
-/*void estimate_initial_position() {
-  double diff = 10000;
-  double min_s = car_s, min_d = car_d;
-
-  std::vector<double> cartesian = getXY(car_s, car_d);
-  //cout << "start diff=" << abs(cartesian[0] - car_x) + abs(cartesian[1] - car_y) << endl;
-
-  if (end_path_s == 0) {
-    for (double s = car_s - 1.0; s < car_s + 1.0; s+=0.01) {
-      for (double d = car_d - 1.0; d < car_d + 1.0; d+=0.01) {
-        std::vector<double> cartesian = getXY(s, d);
-
-        if (abs(cartesian[0] - car_x) + abs(cartesian[1] - car_y) < diff) {
-          diff = abs(cartesian[0] - car_x) + abs(cartesian[1] - car_y);
-          min_s = s;
-          min_d = d;
-        }
-      }
-    }
-    prev_d = min_d;
-    prev_s = min_s;
-  }
-}*/
 
 void LineKeeper::get_old_s_d(State state) {
   for(int i = 0; i < old_x.size(); i++) {
@@ -74,7 +45,6 @@ void LineKeeper::predict(State state, std::vector<double> &next_x_vals, std::vec
   double dist_inc = 0.3;
   double target_speed = 0.4;
 
-  state.traffic.last_id = last_car_id;
   double traffic_speed = state.traffic.get_max_speed(prev_s, prev_d);
   if (traffic_speed > 0) {
     target_speed = traffic_speed;
@@ -108,6 +78,4 @@ void LineKeeper::predict(State state, std::vector<double> &next_x_vals, std::vec
   prev_s = current_s;
   prev_d = 6;
   prev_speed = speed;
-  step++;
-  last_car_id = state.traffic.last_id;
 }

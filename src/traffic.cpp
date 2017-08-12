@@ -19,16 +19,7 @@ double Traffic::get_max_speed(double s, double d) {
       std::cout << "following car " << car.id << " s=" << car.s << " d=" << car.d;
       std::cout << " delta_x " << car.delta_x << " delta_y=" << car.delta_y << " vel=" << car.get_speed();
       std::cout << " delta s=" << s << " delta d=" << d << std::endl;
-      last_id = car.id;
       return car.get_speed();
-    }
-  }
-
-  for(Car &car: _cars) {
-    if (abs(car.id - last_id) < 0.1) {
-      std::cout << "prev car s=" << car.s << " d=" << car.d;
-      std::cout << " delta s=" << s << " delta d=" << d << std::endl;
-      break;
     }
   }
 
