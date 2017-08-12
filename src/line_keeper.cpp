@@ -16,7 +16,9 @@ std::vector<double> LineKeeper::getXY(double s, double d)
 	return {x,y};
 }
 
-void LineKeeper::get_old_s_d(State state) {
+std::vector<double> LineKeeper::get_old_s_d(State state) {
+  double prev_s, prev_d, prev_speed;
+
   for(int i = 0; i < old_x.size(); i++) {
     if (abs(state.car_x - old_x[i]) < 0.001 && abs(state.car_y - old_y[i]) < 0.001) {
       prev_s = old_s[i];
@@ -27,19 +29,24 @@ void LineKeeper::get_old_s_d(State state) {
       old_y.clear();
       old_s.clear();
       old_d.clear();
-      std::cout << "prev_speed=" << prev_speed << std::endl;
-      return;
+
+      return {prev_s, prev_d, prev_speed};
     }
   }
 }
 
 void LineKeeper::predict(State state, std::vector<double> &next_x_vals, std::vector<double> &next_y_vals) {
-  if (prev_speed == 0) {
+  double prev_s, prev_d, prev_speed;
+
+  if (state.previous_path_x.size() < 2) {
     prev_s = state.car_s;
     prev_d = state.car_d;
   }
   else {
-    get_old_s_d(state);
+    std::vector<double> old_s_d_v = get_old_s_d(state);
+    prev_s = old_s_d_v[0];
+    prev_d = old_s_d_v[1];
+    prev_speed = old_s_d_v[2];
   }
 
   double dist_inc = 0.3;
@@ -74,8 +81,4 @@ void LineKeeper::predict(State state, std::vector<double> &next_x_vals, std::vec
       speed -= 0.001;
     }
   }
-
-  prev_s = current_s;
-  prev_d = 6;
-  prev_speed = speed;
 }
