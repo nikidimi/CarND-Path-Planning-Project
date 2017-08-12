@@ -1,4 +1,5 @@
 #include "car.h"
+#include "math.h"
 
 Car::Car(std::vector<double> data) {
   id = data[0];
@@ -11,7 +12,7 @@ Car::Car(std::vector<double> data) {
 }
 
 double Car::get_speed() {
-  return 0.3;
+  return sqrt(delta_x * delta_x + delta_y * delta_y)/50.0;
 }
 
 bool Car::operator<(const Car& rhs) {
