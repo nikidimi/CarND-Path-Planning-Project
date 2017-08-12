@@ -11,7 +11,7 @@
 #include "spline.h"
 #include "Eigen-3.3/Eigen/Dense"
 #include "traffic.h"
-#include "lane_keeper.h"
+#include "behaviour.h"
 #include "state.h"
 
 using namespace std;
@@ -177,11 +177,11 @@ int main() {
   s_x.set_points(map_waypoints_s, map_waypoints_x);
   s_y.set_points(map_waypoints_s, map_waypoints_y);
 
-  LaneKeeper lane_keeper(s_x, s_y);
+  Behaviour behaviour(s_x, s_y);
 
   double prev_s = 0;
 
-  h.onMessage([&lane_keeper, &map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
+  h.onMessage([&behaviour, &map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                      uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
@@ -203,7 +203,7 @@ int main() {
           	vector<double> next_x_vals;
           	vector<double> next_y_vals;
 
-            lane_keeper.predict(state, next_x_vals, next_y_vals);
+            behaviour.predict(state, next_x_vals, next_y_vals);
 
             json msgJson;
           	// TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
