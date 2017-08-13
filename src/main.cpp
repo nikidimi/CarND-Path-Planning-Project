@@ -173,8 +173,10 @@ int main() {
   	map_waypoints_dy.push_back(d_y);
   }
 
+  // Spline for converting from Fernet.
   tk::spline s_x, s_y;
 
+  //Wrap around at the end
   map_waypoints_s.push_back(6945.554);
   map_waypoints_x.push_back(map_waypoints_x[0]);
   map_waypoints_y.push_back(map_waypoints_y[0]);

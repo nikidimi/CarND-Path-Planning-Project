@@ -38,6 +38,7 @@ void Behaviour::predict(State state, std::vector<double> &next_x_vals, std::vect
     double d = paths[0].next_d_vals[i];
     std::vector<double> cartesian = getXY(s, d);
 
+    //Used for getting the previous s and d. Converting to Fernet and back results in errors
     old_x.push_back(cartesian[0]);
     old_y.push_back(cartesian[1]);
     old_s.push_back(s);
@@ -64,6 +65,7 @@ std::vector<double> Behaviour::getXY(double s, double d)
 }
 
 std::vector<double> Behaviour::get_old_s_d(State state, std::vector<double> &next_x_vals, std::vector<double> &next_y_vals) {
+  //Remove points that we have already gone through
   for(int i = 0; i < old_x.size(); i++) {
     if (abs(state.car_x - old_x[i]) < 0.001 && abs(state.car_y - old_y[i]) < 0.001) {
       old_speed.erase(old_speed.begin(), old_speed.begin() + i);
@@ -78,10 +80,12 @@ std::vector<double> Behaviour::get_old_s_d(State state, std::vector<double> &nex
 
   double prev_s, prev_d, prev_speed;
 
+  //Get s,d and speed from previous iteration
   prev_s = old_s.back();
   prev_d = old_d.back();
   prev_speed = old_speed.back();
 
+  //Use the old path for smoothing
   for(int i = 0; i < state.previous_path_x.size(); i++) {
     next_x_vals.push_back(state.previous_path_x[i]);
     next_y_vals.push_back(state.previous_path_y[i]);
