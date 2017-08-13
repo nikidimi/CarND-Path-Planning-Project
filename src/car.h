@@ -1,3 +1,6 @@
+#ifndef CAR_HPP
+#define CAR_HPP
+
 #include <vector>
 
 class Car {
@@ -14,3 +17,6 @@ public:
   double s;
   double d;
 };
+
+
+#endif

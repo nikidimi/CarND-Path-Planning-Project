@@ -1,3 +1,6 @@
+#ifndef LANE_KEEPER_HPP
+#define LANE_KEEPER_HPP
+
 #include <vector>
 #include "spline.h"
 #include "traffic.h"
@@ -8,3 +11,5 @@ public:
   void predict(State state, std::vector<double> &next_x_vals, std::vector<double> &next_y_vals,
     std::vector<double> &next_speed_vals, int target_path_length);
 };
+
+#endif

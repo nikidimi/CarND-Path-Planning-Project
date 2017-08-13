@@ -1,3 +1,6 @@
+#ifndef BEHAVIOUR_HPP
+#define BEHAVIOUR_HPP
+
 #include "spline.h"
 #include "state.h"
 
@@ -20,3 +23,6 @@ private:
   enum BehaviourState { KEEP_LANE, CHANGE_LEFT, CHANGE_RIGHT };
   BehaviourState behaviour_state = KEEP_LANE;
 };
+
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef QUINTIC_SOLVER_HPP
+#define QUINTIC_SOLVER_HPP
+
 #include <vector>
 #include "Eigen-3.3/Eigen/Core"
 #include "Eigen-3.3/Eigen/QR"
@@ -11,3 +14,5 @@ public:
 private:
   std::vector<double> coeff;
 };
+
+#endif
