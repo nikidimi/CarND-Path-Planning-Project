@@ -2,7 +2,9 @@
 #include <math.h>
 #include "spline.h"
 
-void LaneChanger::predict(State state, std::vector<double> &next_s_vals, std::vector<double> &next_d_vals, std::vector<double> &next_speed_vals, int target_path_length) {
+Path LaneChanger::predict(State state, int target_path_length) {
+  Path path;
+
   double prev_s = state.car_s;
   double prev_d = state.car_d;
   double prev_speed = state.car_speed;
@@ -26,9 +28,9 @@ void LaneChanger::predict(State state, std::vector<double> &next_s_vals, std::ve
     current_s = s;
     double d = spline_d(i);
 
-    next_s_vals.push_back(s);
-    next_d_vals.push_back(d);
-    next_speed_vals.push_back(speed);
+    path.next_s_vals.push_back(s);
+    path.next_d_vals.push_back(d);
+    path.next_speed_vals.push_back(speed);
 
     if (speed < target_speed) {
       speed += 0.001;
@@ -37,4 +39,6 @@ void LaneChanger::predict(State state, std::vector<double> &next_s_vals, std::ve
       speed -= 0.001;
     }
   }
+
+  return path;
 }

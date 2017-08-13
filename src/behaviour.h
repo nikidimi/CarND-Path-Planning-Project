@@ -19,9 +19,6 @@ private:
   std::vector<double> get_old_s_d(State state, std::vector<double> &next_x_vals, std::vector<double> &next_y_vals);
   tk::spline _s_x;
   tk::spline _s_y;
-
-  enum BehaviourState { KEEP_LANE, CHANGE_LEFT, CHANGE_RIGHT };
-  BehaviourState behaviour_state = KEEP_LANE;
 };
 
 

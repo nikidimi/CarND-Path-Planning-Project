@@ -1,6 +1,7 @@
 #include "behaviour.h"
 #include "lane_keeper.h"
 #include "lane_changer.h"
+#include <algorithm>
 
 void Behaviour::predict(State state, std::vector<double> &next_x_vals, std::vector<double> &next_y_vals) {
   std::vector<double> next_s_vals, next_d_vals, next_speed_vals;
@@ -13,35 +14,33 @@ void Behaviour::predict(State state, std::vector<double> &next_x_vals, std::vect
     state.car_speed = old_s_d_v[2];
   }
 
-  if (state.traffic.get_max_speed(state.car_s, state.car_d, state.previous_path_x.size()) && state.car_d > 4) {
+  std::vector<Path> paths;
+  if (state.car_d > 4) {
     LaneChanger lane_changer;
     lane_changer.lane_change = -1;
-    lane_changer.predict(state, next_s_vals, next_d_vals, next_speed_vals, target_path_length);
-    behaviour_state = CHANGE_LEFT;
+    paths.push_back(lane_changer.predict(state, target_path_length));
   }
-  else if (state.traffic.get_max_speed(state.car_s, state.car_d, state.previous_path_x.size()) && state.car_d < 8) {
+  if (state.car_d < 8) {
     LaneChanger lane_changer;
     lane_changer.lane_change = 1;
-    lane_changer.predict(state, next_s_vals, next_d_vals, next_speed_vals, target_path_length);
+    paths.push_back(lane_changer.predict(state, target_path_length));
   }
-  else {
-    LaneKeeper lane_keeper;
-    lane_keeper.predict(state, next_s_vals, next_d_vals, next_speed_vals, target_path_length);
-    behaviour_state = KEEP_LANE;
-  }
+  LaneKeeper lane_keeper;
+  paths.push_back(lane_keeper.predict(state, target_path_length));
 
+  std::sort(paths.begin(), paths.end());
 
-  for(int i = 0; i < next_s_vals.size(); i++)
+  for(int i = 0; i < paths[0].next_s_vals.size(); i++)
   {
-    double s = next_s_vals[i];
-    double d = next_d_vals[i];
+    double s = paths[0].next_s_vals[i];
+    double d = paths[0].next_d_vals[i];
     std::vector<double> cartesian = getXY(s, d);
 
     old_x.push_back(cartesian[0]);
     old_y.push_back(cartesian[1]);
     old_s.push_back(s);
     old_d.push_back(d);
-    old_speed.push_back(next_speed_vals[i]);
+    old_speed.push_back(paths[0].next_speed_vals[i]);
     next_x_vals.push_back(cartesian[0]);
     next_y_vals.push_back(cartesian[1]);
   }
