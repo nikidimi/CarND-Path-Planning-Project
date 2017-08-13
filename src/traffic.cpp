@@ -23,3 +23,17 @@ double Traffic::get_max_speed(double s, double d, double t) {
 
   return 0;
 }
+
+bool Traffic::check_for_collision(double s, double d, double t) {
+  for(Car &car: _cars) {
+    double future_s = car.s + car.get_speed() * t;
+    if (car.d < d - 2 || car.d > d + 2) {
+      continue;
+    }
+    if (abs(future_s - s) < 10) {
+      return true;
+    }
+  }
+
+  return false;
+}

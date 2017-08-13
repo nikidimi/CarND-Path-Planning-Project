@@ -31,5 +31,11 @@ double Path::obstructed_cost(Traffic traffic, int t) const {
 }
 
 double Path::collision_cost(Traffic traffic, int t) const {
+  if (next_speed_vals.size() == 0) return 0;
+  for(int i = 0; i < next_d_vals.size(); i++) {
+    if (traffic.check_for_collision(next_s_vals[i], next_d_vals[i], t + i)) {
+      return 1.0;
+    }
+  }
   return 0;
 }
