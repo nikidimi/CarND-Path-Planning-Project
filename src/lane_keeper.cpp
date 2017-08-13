@@ -1,4 +1,5 @@
 #include "lane_keeper.h"
+#include <math.h>
 
 void LaneKeeper::predict(State state, std::vector<double> &next_s_vals, std::vector<double> &next_d_vals, std::vector<double> &next_speed_vals) {
   double prev_s = state.car_s;
@@ -17,7 +18,7 @@ void LaneKeeper::predict(State state, std::vector<double> &next_s_vals, std::vec
 
   for(int i = 1; i < 500; i++)
   {
-    double s = current_s + speed;
+    double s = fmod(current_s + speed, 6945.554);
     current_s = s;
     double d = 6;
 

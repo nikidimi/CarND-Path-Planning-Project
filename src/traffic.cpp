@@ -19,7 +19,7 @@ double Traffic::get_max_speed(double s, double d) {
       std::cout << "following car " << car.id << " s=" << car.s << " d=" << car.d;
       std::cout << " delta_x " << car.delta_x << " delta_y=" << car.delta_y << " vel=" << car.get_speed();
       std::cout << " delta s=" << s << " delta d=" << d << std::endl;
-      return car.get_speed();
+      return 0.9 * car.get_speed();
     }
   }
 

@@ -174,6 +174,11 @@ int main() {
   }
 
   tk::spline s_x, s_y;
+
+  map_waypoints_s.push_back(6945.554);
+  map_waypoints_x.push_back(map_waypoints_x[0]);
+  map_waypoints_y.push_back(map_waypoints_y[0]);
+
   s_x.set_points(map_waypoints_s, map_waypoints_x);
   s_y.set_points(map_waypoints_s, map_waypoints_y);
 
@@ -181,7 +186,7 @@ int main() {
 
   double prev_s = 0;
 
-  h.onMessage([&behaviour, &map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
+  h.onMessage([&behaviour](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                      uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
