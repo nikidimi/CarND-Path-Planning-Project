@@ -5,6 +5,7 @@
 
 void Behaviour::predict(State state, std::vector<double> &next_x_vals, std::vector<double> &next_y_vals) {
   std::vector<double> next_s_vals, next_d_vals, next_speed_vals;
+  int old_length = state.previous_path_x.size();
   int target_path_length = 100 - state.previous_path_x.size();
 
   if (state.previous_path_x.size() > 2) {
@@ -28,6 +29,7 @@ void Behaviour::predict(State state, std::vector<double> &next_x_vals, std::vect
   LaneKeeper lane_keeper;
   paths.push_back(lane_keeper.predict(state, target_path_length));
 
+  std::for_each(paths.begin(), paths.end(), [&state, &old_length](Path &p){ p.calc_cost(state.traffic, old_length); });
   std::sort(paths.begin(), paths.end());
 
   for(int i = 0; i < paths[0].next_s_vals.size(); i++)
