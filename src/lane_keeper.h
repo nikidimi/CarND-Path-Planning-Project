@@ -1,4 +1,3 @@
-#include "quintic_solver.h"
 #include <vector>
 #include "spline.h"
 #include "traffic.h"
@@ -6,5 +5,6 @@
 
 class LaneKeeper {
 public:
-  void predict(State state, std::vector<double> &next_x_vals, std::vector<double> &next_y_vals, std::vector<double> &next_speed_vals);
+  void predict(State state, std::vector<double> &next_x_vals, std::vector<double> &next_y_vals,
+    std::vector<double> &next_speed_vals, int target_path_length);
 };

@@ -1,13 +1,14 @@
 #include "lane_keeper.h"
 #include <math.h>
 
-void LaneKeeper::predict(State state, std::vector<double> &next_s_vals, std::vector<double> &next_d_vals, std::vector<double> &next_speed_vals) {
+void LaneKeeper::predict(State state, std::vector<double> &next_s_vals, std::vector<double> &next_d_vals, std::vector<double> &next_speed_vals, int target_path_length) {
   double prev_s = state.car_s;
   double prev_d = state.car_d;
   double prev_speed = state.car_speed;
 
   double dist_inc = 0.3;
   double target_speed = 0.4;
+  int target_lane = round((prev_d - 2)/4.0);
 
   double traffic_speed = state.traffic.get_max_speed(prev_s, prev_d);
   if (traffic_speed > 0) {
@@ -16,11 +17,11 @@ void LaneKeeper::predict(State state, std::vector<double> &next_s_vals, std::vec
   double speed = prev_speed;
   double current_s = prev_s;
 
-  for(int i = 1; i < 500; i++)
+  for(int i = 1; i < target_path_length; i++)
   {
     double s = fmod(current_s + speed, 6945.554);
     current_s = s;
-    double d = 6;
+    double d = target_lane * 4 + 2;
 
     next_s_vals.push_back(s);
     next_d_vals.push_back(d);
