@@ -1,16 +1,35 @@
 #include "behaviour.h"
+#include "lane_keeper.h"
+#include "lane_changer.h"
 
 void Behaviour::predict(State state, std::vector<double> &next_x_vals, std::vector<double> &next_y_vals) {
   std::vector<double> next_s_vals, next_d_vals, next_speed_vals;
+  int target_path_length = 100 - state.previous_path_x.size();
 
   if (state.previous_path_x.size() > 2) {
-    std::vector<double> old_s_d_v = get_old_s_d(state);
+    std::vector<double> old_s_d_v = get_old_s_d(state, next_x_vals, next_y_vals);
     state.car_s = old_s_d_v[0];
     state.car_d = old_s_d_v[1];
     state.car_speed = old_s_d_v[2];
   }
 
-  lane_keeper.predict(state, next_s_vals, next_d_vals, next_speed_vals);
+  if (state.traffic.get_max_speed(state.car_s, state.car_d, state.previous_path_x.size()) && state.car_d > 4) {
+    LaneChanger lane_changer;
+    lane_changer.lane_change = -1;
+    lane_changer.predict(state, next_s_vals, next_d_vals, next_speed_vals, target_path_length);
+    behaviour_state = CHANGE_LEFT;
+  }
+  else if (state.traffic.get_max_speed(state.car_s, state.car_d, state.previous_path_x.size()) && state.car_d < 8) {
+    LaneChanger lane_changer;
+    lane_changer.lane_change = 1;
+    lane_changer.predict(state, next_s_vals, next_d_vals, next_speed_vals, target_path_length);
+  }
+  else {
+    LaneKeeper lane_keeper;
+    lane_keeper.predict(state, next_s_vals, next_d_vals, next_speed_vals, target_path_length);
+    behaviour_state = KEEP_LANE;
+  }
+
 
   for(int i = 0; i < next_s_vals.size(); i++)
   {
@@ -28,7 +47,6 @@ void Behaviour::predict(State state, std::vector<double> &next_x_vals, std::vect
   }
 }
 
-
 std::vector<double> Behaviour::getXY(double s, double d)
 {
   double EPSILON = 2.0;
@@ -44,21 +62,29 @@ std::vector<double> Behaviour::getXY(double s, double d)
 	return {x,y};
 }
 
-std::vector<double> Behaviour::get_old_s_d(State state) {
-  double prev_s, prev_d, prev_speed;
-
+std::vector<double> Behaviour::get_old_s_d(State state, std::vector<double> &next_x_vals, std::vector<double> &next_y_vals) {
   for(int i = 0; i < old_x.size(); i++) {
     if (abs(state.car_x - old_x[i]) < 0.001 && abs(state.car_y - old_y[i]) < 0.001) {
-      prev_s = old_s[i];
-      prev_d = old_d[i];
-      prev_speed = old_speed[i];
-      old_speed.clear();
-      old_x.clear();
-      old_y.clear();
-      old_s.clear();
-      old_d.clear();
+      old_speed.erase(old_speed.begin(), old_speed.begin() + i);
+      old_x.erase(old_x.begin(), old_x.begin() + i);
+      old_y.erase(old_y.begin(), old_y.begin() + i);
+      old_s.erase(old_s.begin(), old_s.begin() + i);
+      old_d.erase(old_d.begin(), old_d.begin() + i);
 
-      return {prev_s, prev_d, prev_speed};
+      break;
     }
   }
+
+  double prev_s, prev_d, prev_speed;
+
+  prev_s = old_s.back();
+  prev_d = old_d.back();
+  prev_speed = old_speed.back();
+
+  for(int i = 0; i < state.previous_path_x.size(); i++) {
+    next_x_vals.push_back(state.previous_path_x[i]);
+    next_y_vals.push_back(state.previous_path_y[i]);
+  }
+
+  return {prev_s, prev_d, prev_speed};
 }
